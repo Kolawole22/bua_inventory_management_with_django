@@ -1,16 +1,23 @@
 from django.urls import path
-from .views import AssignedInventoryListView, InventoryListCreateView, InventoryDetailView, CustomInventoryView, UnassignedInventoryListView
+from .views import (InventoryViewSet, LoginView, LogoutView,
+                    check_authentication, EmailAPI)
+from rest_framework.routers import DefaultRouter
+
 
 urlpatterns = [
-    path('inventory/', InventoryListCreateView.as_view(),
-         name='inventory-list-create'),
-    path('inventory/<int:pk>/', InventoryDetailView.as_view(),
-         name='inventory-detail'),
-    path('custom-inventory/', CustomInventoryView.as_view(),
-         name='custom-inventory'),
-    path('inventory/assigned/', AssignedInventoryListView.as_view(),
-         name='assigned-inventory-list'),
-    path('inventory/unassigned/', UnassignedInventoryListView.as_view(),
-         name='unassigned-inventory-list'),
+    path('check-auth/', check_authentication, name='check-authentication'),
+    path('login/', LoginView.as_view(),
+         name='users-login'),
+    #     path('users/', UserListView.as_view(),
+    #          name='users-litt'),
+    path('logout/', LogoutView.as_view(),
+         name='users-logout'),
+    path('send-email/',  EmailAPI.as_view(),
+         name='send-email'),
+
 
 ]
+
+router = DefaultRouter()
+router.register(r'inventories', InventoryViewSet, basename='inventory/')
+urlpatterns += router.urls

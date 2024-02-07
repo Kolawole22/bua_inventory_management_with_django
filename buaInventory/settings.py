@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+# from inventorydb.logging import DatabaseHandler
+from datetime import timedelta
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,14 +31,35 @@ DEBUG = True
 ALLOWED_HOSTS = []
 # CORS_ALLOWED_ORIGINS = ['*']
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
-CORS_ALLOW_HEADERS = ['*']  # You can customize this as
+# CORS_ALLOW_HEADERS = ['*']  # You can customize this as
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_HEADERS = [
+#     'access-control-allow-origin',
+#     'authorization',
+#     'content-type',
+#     'access-control-allow-headers',
+#     'x-csrftoken'
+# ]
+CORS_ORIGINS_WHITELIST = (
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'http://127.0.0.1:5173'
+
+)
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:5173'
+]
+
+# SESSION_COOKIE_SAMESITE = None
+# CSRF_COOKIE_SAMESITE = None
+# CSRF_COOKIE_DOMAIN = 'localhost'
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'inventorydb.apps.InventorydbConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,16 +67,46 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
+    'django_filters',
+    'django_db_logger',
+    'drf_api_logger_with_user',
+
+    'inventorydb.apps.InventorydbConfig',
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
+    'EXCEPTION_HANDLER': 'inventorydb.utils.custom_exception_handler',
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    # ]
+    # ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+
 }
+
+DRF_API_LOGGER_DATABASE = True
+DRF_API_LOGGER_SIGNAL = True
+DRF_API_LOGGER_METHODS = ['POST', 'DELETE', 'PUT']
+DRF_API_LOGGER_STATUS_CODES = [200, 400, 404, 500]
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Adjust as needed
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Adjust as needed
+}
+
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -63,6 +117,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'drf_api_logger_with_user.middleware.api_logger_middleware.APILoggerMiddleware',
 ]
 
 ROOT_URLCONF = 'buaInventory.urls'
@@ -86,6 +141,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'buaInventory.wsgi.application'
 
 
+# SESSION_ENGINE = "django.contrib.sessions.backends.db"
+# SESSION_COOKIE_NAME = "your_session_cookie_name"
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -106,6 +168,60 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'sql8668658',
+#         'USER': 'sql8668658',
+#         'PASSWORD': 'sQNtSWpdBz',
+#         'HOST': 'sql8.freemysqlhosting.net',
+#         'PORT': '3306',
+#     }
+# }
+
+# # inventory-db.cd0ssdmwdqe9.eu-north-1.rds.amazonaws.com
+
+# settings.py
+
+# settings.py
+
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'verbose': {
+#             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+#         },
+#         'simple': {
+#             'format': '%(levelname)s %(asctime)s %(message)s'
+#         },
+#     },
+#     'handlers': {
+#         'db_log': {
+#             'level': 'DEBUG',
+#             'class': 'django_db_logger.db_log_handler.DatabaseLogHandler'
+#         },
+#     },
+#     'loggers': {
+#         'db': {
+#             'handlers': ['db_log'],
+#             'level': 'DEBUG'
+#         },
+#         'django.request': {  # Logging 500 errors to the database
+#             'handlers': ['db_log'],
+#             'level': 'ERROR',
+#             'propagate': False,
+#         },
+#         'django.server': {  # Logging HTTP requests
+#             'handlers': ['db_log'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#     }
+# }
 
 
 # Password validation
@@ -148,3 +264,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email Config
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'kolaiwalewa@gmail.com'
+EMAIL_HOST_PASSWORD = 'gtxz qqrs cnlf hfzw'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_TIMEOUT = 300  # in seconds
+DEFAULT_FROM_EMAIL = 'BUA Group IT'
