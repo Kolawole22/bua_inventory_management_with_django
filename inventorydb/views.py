@@ -24,44 +24,10 @@ from django.conf import settings
 from rest_framework import viewsets
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.http import HttpResponse
+import csv
 
 
-# logger = logging.getLogger(__name__)
-
-
-# def api_log_view(request):
-#     try:
-#         user = request.user
-#         # Assuming you want to log the HTTP method (POST, PUT, PATCH)
-#         api_type = request.method
-
-#         # Only log POST, PUT, and PATCH requests
-#         if api_type in ['POST', 'PUT', 'PATCH']:
-#             changes_made = f"Data: {request.data}"
-
-#             # Log relevant information to the file
-#             logger.info(
-#                 f"API {api_type} request by user: {user.username}. Changes made: {changes_made}")
-
-#             # Log relevant information to the database using the custom DatabaseHandler
-#             logger.info(
-#                 f"API {api_type} request by user: {user.username}. Changes made: {changes_made}",
-#                 extra={'api_type': api_type, 'user': user,
-#                        'changes_made': changes_made}
-#             )
-
-#         # Your view logic here
-#         return JsonResponse({'message': 'Success'})
-#     except Exception as e:
-#         # Handle exceptions
-#         logger.error(f"Error processing API request: {str(e)}")
-#         return JsonResponse({'error': str(e)}, status=500)
-
-
-# @api_view(['POST'])
-
-
-# @login_required
 @api_view(['GET'])
 def check_authentication(request):
     user = request.user
@@ -97,12 +63,6 @@ class LogoutView(APIView):
     def post(self, request, *args, **kwargs):
         logout(request)
         return Response({'message': 'Logout successful!'})
-
-
-# class UserListView(generics.ListAPIView):
-#     # permission_classes = [IsAuthenticated]
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
 
 
 class InventoryFilter(django_filters.FilterSet):
@@ -226,16 +186,49 @@ class InventoryViewSet(viewsets.ModelViewSet):
         return response
 
 
-# class ActionLogView(generics.ListCreateAPIView):
-#     permission_classes = [IsAuthenticated]
-#     queryset = ActionLog.objects.all()
-#     serializer_class = ActionLogSerializer
+class DownloadCSVView(APIView):
+    def get(self, request):
+        # Query all Inventory objects
+        queryset = Inventory.objects.all()
 
+        # Define CSV headers
+        field_names = [
+            'tag_number', 'date', 'equipment', 'purpose', 'os', 'user',
+            'department', 'computer_name', 'model', 'color', 'serial_number',
+            'vendor', 'created_at', 'assigned', 'subsidiary', 'location',
+            'email', 'cost_price'
+        ]
 
-# class ActionLogDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     permission_classes = [IsAuthenticated]
-#     queryset = ActionLog.objects.all()
-#     serializer_class = ActionLogSerializer
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="inventory_data.csv"'
+
+        writer = csv.DictWriter(response, fieldnames=field_names)
+        writer.writeheader()
+
+        # Write data rows to CSV
+        for inventory in queryset:
+            writer.writerow({
+                'tag_number': inventory.tag_number,
+                'date': inventory.date,
+                'equipment': inventory.equipment,
+                'purpose': inventory.purpose,
+                'os': inventory.os,
+                'user': inventory.user,
+                'department': inventory.department,
+                'computer_name': inventory.computer_name,
+                'model': inventory.model,
+                'color': inventory.color,
+                'serial_number': inventory.serial_number,
+                'vendor': inventory.vendor,
+                'created_at': inventory.created_at,
+                'assigned': inventory.assigned,
+                'subsidiary': inventory.subsidiary,
+                'location': inventory.location,
+                'email': inventory.email,
+                'cost_price': inventory.cost_price,
+            })
+
+        return response
 
 
 class EmailAPI(APIView):

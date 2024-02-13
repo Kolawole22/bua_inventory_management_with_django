@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 # from inventorydb.logging import DatabaseHandler
 from datetime import timedelta
 from pathlib import Path
+import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,28 +29,37 @@ SECRET_KEY = 'django-insecure-+cv+x%)z6zhb47y-%u$gss5%ag(^5#b8hq(1(p=hpsfkvwu$rt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.18.8', '127.0.0.1',
+                 'localhost', '192.168.108.160', 'buagroup.local']
+# ALLOWED_HOSTS = ['*']
 # CORS_ALLOWED_ORIGINS = ['*']
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 # CORS_ALLOW_HEADERS = ['*']  # You can customize this as
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-# CORS_ALLOW_HEADERS = [
-#     'access-control-allow-origin',
-#     'authorization',
-#     'content-type',
-#     'access-control-allow-headers',
-#     'x-csrftoken'
-# ]
+CORS_ALLOW_HEADERS = [
+    'access-control-allow-origin',
+    'authorization',
+    'content-type',
+    'access-control-allow-headers',
+    'x-csrftoken',
+    'responseType'
+]
 CORS_ORIGINS_WHITELIST = (
     'http://127.0.0.1:8000',
     'http://localhost:8000',
-    'http://127.0.0.1:5173'
+    'http://127.0.0.1:5173',
+    'http://192.168.18.8:8000',
+    'http://192.168.18.8:5173'
+    # '192.168.108.160:8000',
+    # 'buagroup.local:8000'
 
 )
 
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:5173'
+    'http://192.168.18.8:8000',
+    'http://192.168.18.8:5173'
 ]
 
 # SESSION_COOKIE_SAMESITE = None
@@ -185,45 +195,6 @@ DATABASES = {
 
 # settings.py
 
-# settings.py
-
-
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'verbose': {
-#             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-#         },
-#         'simple': {
-#             'format': '%(levelname)s %(asctime)s %(message)s'
-#         },
-#     },
-#     'handlers': {
-#         'db_log': {
-#             'level': 'DEBUG',
-#             'class': 'django_db_logger.db_log_handler.DatabaseLogHandler'
-#         },
-#     },
-#     'loggers': {
-#         'db': {
-#             'handlers': ['db_log'],
-#             'level': 'DEBUG'
-#         },
-#         'django.request': {  # Logging 500 errors to the database
-#             'handlers': ['db_log'],
-#             'level': 'ERROR',
-#             'propagate': False,
-#         },
-#         'django.server': {  # Logging HTTP requests
-#             'handlers': ['db_log'],
-#             'level': 'DEBUG',
-#             'propagate': False,
-#         },
-#     }
-# }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -264,6 +235,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Email Config
 EMAIL_HOST = 'smtp.gmail.com'

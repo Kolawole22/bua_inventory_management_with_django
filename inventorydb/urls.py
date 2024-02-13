@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (InventoryViewSet, LoginView, LogoutView,
+from .views import (DownloadCSVView, InventoryViewSet, LoginView, LogoutView,
                     check_authentication, EmailAPI)
 from rest_framework.routers import DefaultRouter
 
@@ -12,6 +12,7 @@ urlpatterns = [
     #          name='users-litt'),
     path('logout/', LogoutView.as_view(),
          name='users-logout'),
+    path('download-csv/', DownloadCSVView.as_view(), name='download_csv'),
     path('send-email/',  EmailAPI.as_view(),
          name='send-email'),
 
