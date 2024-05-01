@@ -4,3 +4,4 @@ from .models import Inventory
 
 # Register your models here.
 admin.site.register(Inventory)
+#admin.site.site_title("BUA Inventory Administration")

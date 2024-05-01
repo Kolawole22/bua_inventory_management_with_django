@@ -1,3 +1,5 @@
+import base64
+import binascii
 from django.http import JsonResponse
 from django.views import View
 from rest_framework import serializers
@@ -7,6 +9,7 @@ from django_filters import rest_framework as filters, DateRangeFilter
 import django_filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from .models import Inventory, ActionLog
 from .serializers import ActionLogSerializer, InventorySerializer, LoginSerializer
 from rest_framework.views import exception_handler
@@ -26,6 +29,10 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 import csv
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.utils.decorators import method_decorator
+from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 
 @api_view(['GET'])
@@ -35,6 +42,8 @@ def check_authentication(request):
         return Response({'message': f"User {user.username} is authenticated"})
     else:
         return Response({'message': 'User is not authenticated'})
+
+# @method_decorator(csrf_exempt, name='dispatch')
 
 
 class LoginView(APIView):
@@ -49,20 +58,28 @@ class LoginView(APIView):
 
         if user is not None:
             refresh = RefreshToken.for_user(user)
+            user_data = {
+                'username': user.username,
+                'is_superuser': user.is_superuser,
+                'is_staff': user.is_staff}
             return Response({
                 'access': str(refresh.access_token),
-                'refresh': str(refresh)
+                'refresh': str(refresh),
+                'user': user_data
             })
         else:
             return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # @api_view(['POST'])
-
 class LogoutView(APIView):
+    # authentication_classes = [Toke]
+
     def post(self, request, *args, **kwargs):
+
         logout(request)
-        return Response({'message': 'Logout successful!'})
+        # request.session.flush()
+        return Response({'message': 'Logout successful!', 'success': True})
 
 
 class InventoryFilter(django_filters.FilterSet):
@@ -75,9 +92,13 @@ class InventoryFilter(django_filters.FilterSet):
         fields = ['user', 'subsidiary', 'location', 'assigned',
                   'tag_number', 'department', 'date', 'equipment']
 
+# @method_decorator(csrf_exempt, name='dispatch')
+
 
 class InventoryViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    # authentication_classes = []
+    # authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     queryset = Inventory.objects.order_by('-date')
     serializer_class = InventorySerializer
     filter_backends = [filters.DjangoFilterBackend]
@@ -187,6 +208,8 @@ class InventoryViewSet(viewsets.ModelViewSet):
 
 
 class DownloadCSVView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         # Query all Inventory objects
         queryset = Inventory.objects.all()

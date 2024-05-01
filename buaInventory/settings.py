@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-+cv+x%)z6zhb47y-%u$gss5%ag(^5#b8hq(1(p=hpsfkvwu$rt
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.18.8', '127.0.0.1',
-                 'localhost', '192.168.108.160', 'buagroup.local']
+                 'localhost', '192.168.108.160', 'buagroup.local', '192.168.204.8', '192.168.108.172']
 # ALLOWED_HOSTS = ['*']
 # CORS_ALLOWED_ORIGINS = ['*']
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
@@ -111,8 +111,10 @@ DRF_API_LOGGER_METHODS = ['POST', 'DELETE', 'PUT']
 DRF_API_LOGGER_STATUS_CODES = [200, 400, 404, 500]
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Adjust as needed
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Adjust as needed
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Adjust as needed
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=40),  # Adjust as needed
+    "ROTATE_REFRESH_TOKENS": True,
+    # "BLACKLIST_AFTER_ROTATION": False,
 }
 
 CSRF_COOKIE_SECURE = False
@@ -128,6 +130,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'drf_api_logger_with_user.middleware.api_logger_middleware.APILoggerMiddleware',
+    # 'django.contrib.staticfiles.middleware.StaticFilesMiddleware',
 ]
 
 ROOT_URLCONF = 'buaInventory.urls'
@@ -217,26 +220,32 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
+
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static/",
+#     # Add other directories if needed
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = "C:/Users/HR/projects/react/bua-inventory-management/backend/buaInventory/static"
 
 # Email Config
 EMAIL_HOST = 'smtp.gmail.com'

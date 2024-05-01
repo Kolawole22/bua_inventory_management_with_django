@@ -19,6 +19,9 @@ from django.urls import include, path
 from rest_framework_simplejwt.views import (
     TokenObtainPairView, TokenRefreshView)
 
+admin.site.site_header = "BUA Asset Inventory Administration Dashboard"
+admin.site.site_title = "BUA Asset Inventory"
+
 urlpatterns = [
     path("api/", include("inventorydb.urls")),
 
