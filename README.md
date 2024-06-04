@@ -7,14 +7,14 @@ open mysql workbench and create a database with a name of your choice
 
   
 Clone this repository or download the project files.  
-You can clone this project by running git clone   
+You can clone this project by running "git clone https://github.com/Kolawole22/bua_inventory_management_with_django.git"   
 Navigate to the project directory in your terminal.
 
 Create a .env file in the project root directory and add environment variables for database credentials.  
 
 Here's an example .env file:  
 DATABASE_NAME=your_database_name  
-DATABASE_USER=your_database_user
+DATABASE_USER=your_database_user  
 DATABASE_PASSWORD=your_database_password
 
 ## Libraries
