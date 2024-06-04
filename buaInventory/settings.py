@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 # from inventorydb.logging import DatabaseHandler
+from dotenv import load_dotenv  # If you're using python-dotenv
 from datetime import timedelta
 from pathlib import Path
 import os
@@ -30,7 +31,7 @@ SECRET_KEY = 'django-insecure-+cv+x%)z6zhb47y-%u$gss5%ag(^5#b8hq(1(p=hpsfkvwu$rt
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.18.8', '127.0.0.1',
-                 'localhost', '192.168.108.160', 'buagroup.local', '192.168.204.8', '192.168.108.172']
+                 'localhost', '192.168.108.160', 'buagroup.local', '192.168.204.8', '192.168.108.172', '192.168.72.54']
 # ALLOWED_HOSTS = ['*']
 # CORS_ALLOWED_ORIGINS = ['*']
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
@@ -49,6 +50,7 @@ CORS_ORIGINS_WHITELIST = (
     'http://127.0.0.1:8000',
     'http://localhost:8000',
     'http://127.0.0.1:5173',
+    'localhost:5173',
     'http://192.168.18.8:8000',
     'http://192.168.18.8:5173'
     # '192.168.108.160:8000',
@@ -171,12 +173,15 @@ AUTHENTICATION_BACKENDS = [
 #     }
 # }
 
+
+load_dotenv()  # Load the .env file
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bua_inventory_db',
-        'USER': 'root',
-        'PASSWORD': 'admin',
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '3306',
     }

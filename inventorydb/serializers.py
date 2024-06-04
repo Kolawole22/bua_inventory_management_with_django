@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from rest_framework import serializers, viewsets
 # Assuming your models are in the same directory
-from .models import ActionLog, Inventory
+from .models import Inventory
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model, authenticate
 
@@ -24,11 +24,6 @@ class InventorySerializer(serializers.ModelSerializer):
         #         )
 
 
-class ActionLogSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ActionLog
-        fields = '__all__'
 
 
 class UserSerializer(serializers.ModelSerializer):

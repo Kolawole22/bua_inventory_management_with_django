@@ -10,8 +10,8 @@ import django_filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Inventory, ActionLog
-from .serializers import ActionLogSerializer, InventorySerializer, LoginSerializer
+from .models import Inventory
+from .serializers import InventorySerializer, LoginSerializer
 from rest_framework.views import exception_handler
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout

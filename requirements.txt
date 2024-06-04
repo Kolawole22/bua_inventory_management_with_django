@@ -1,10 +1,19 @@
+# requirements.txt
+
 asgiref==3.7.2
+bleach==6.1.0
 Django==4.2.7
 django-cors-headers==4.3.1
+django-db-logger==0.1.13
 django-filter==23.4
 djangorestframework==3.14.0
+drf_api_logger_with_user==1.2.5
 Markdown==3.5.1
-mysqlclient==2.2.0
+mysqlclient==2.2.4
+PyJWT==2.8.0
 pytz==2023.3.post1
+rest-framework-simplejwt==0.0.2
+six==1.16.0
 sqlparse==0.4.4
 tzdata==2023.3
+webencodings==0.5.1
